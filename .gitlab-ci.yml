@@ -52,8 +52,8 @@ sbom:
   extends: .rust
   stage: security
   script:
-    - cargo install cargo-cyclonedx --locked
-    - cargo cyclonedx --format json --output-cdx
+    - cargo install cargo-cyclonedx --version 0.5.9 --locked
+    - cargo cyclonedx --format json --override-filename kernox-monitor.cdx.json
   artifacts:
     paths: [kernox-monitor.cdx.json]
 
