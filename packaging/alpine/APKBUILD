@@ -1,0 +1,22 @@
+pkgname=kernox-monitor
+pkgver=0.2.0
+pkgrel=0
+pkgdesc="Cross-platform terminal system monitor for KernOX"
+url="https://gitlab.com/malorus-kseroks/monitor"
+arch="x86_64 aarch64"
+license="GPL-3.0-only"
+makedepends="cargo>=1.95"
+source="$pkgname-$pkgver.tar.gz::$url/-/archive/v$pkgver/monitor-v$pkgver.tar.gz"
+builddir="$srcdir/monitor-v$pkgver"
+options="!check" # Enable after the Alpine CI runner is provisioned.
+
+build() {
+	cargo build --release --locked
+}
+
+package() {
+	install -Dm755 target/release/kernox-monitor "$pkgdir/usr/bin/kernox-monitor"
+	install -Dm644 packaging/man/kernox-monitor.1 "$pkgdir/usr/share/man/man1/kernox-monitor.1"
+}
+
+sha512sums="SKIP"

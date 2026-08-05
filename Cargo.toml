@@ -1,0 +1,60 @@
+[package]
+name = "kernox-monitor"
+version = "0.2.0"
+edition = "2024"
+rust-version = "1.95"
+license = "GPL-3.0-only"
+description = "A capability-aware, cross-platform system monitor and Linux workstation TUI"
+repository = "https://gitlab.com/malorus-kseroks/monitor"
+readme = "README.md"
+publish = false
+
+[[bin]]
+name = "kernox-monitor"
+path = "src/main.rs"
+
+[features]
+default = ["containers"]
+containers = ["dep:bollard"]
+gpu-nvidia = ["dep:nvml-wrapper"]
+
+[dependencies]
+anyhow = "1.0"
+async-trait = "0.1"
+bollard = { version = "0.21.0", default-features = false, features = ["pipe"], optional = true }
+chrono = { version = "0.4.45", default-features = false, features = ["clock", "serde"] }
+clap = { version = "4.6.1", features = ["derive", "env"] }
+clap_complete = "4.6"
+crossterm = "0.29.0"
+futures-util = "0.3.32"
+if-addrs = "0.14"
+ratatui = "0.30.2"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sysinfo = { version = "0.39.6", default-features = false, features = ["system", "disk", "network", "user"] }
+thiserror = "2.0"
+tokio = { version = "1.52.3", features = ["io-util", "macros", "process", "rt-multi-thread", "signal", "sync", "time"] }
+tokio-util = { version = "0.7", features = ["rt"] }
+toml = "0.9"
+tracing = "0.1"
+unicode-width = "0.2"
+zeroize = { version = "1.8", features = ["derive"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+nvml-wrapper = { version = "0.11", optional = true }
+zbus = { version = "5", default-features = false, features = ["tokio"] }
+
+[dev-dependencies]
+proptest = "1.7"
+tempfile = "3.23"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = "warn"

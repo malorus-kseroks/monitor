@@ -1,0 +1,33 @@
+pkgname=kernox-monitor
+pkgver=0.2.0
+pkgrel=1
+pkgdesc='Cross-platform terminal system monitor for KernOX'
+arch=('x86_64' 'aarch64')
+url='https://gitlab.com/malorus-kseroks/monitor'
+license=('GPL-3.0-only')
+depends=('glibc')
+makedepends=('cargo>=1.95')
+source=("$pkgname-$pkgver.tar.gz::$url/-/archive/v$pkgver/monitor-v$pkgver.tar.gz")
+sha256sums=('SKIP') # Replaced by the release preparation job.
+
+prepare() {
+  cd "monitor-v$pkgver"
+  cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+}
+
+build() {
+  cd "monitor-v$pkgver"
+  cargo build --release --locked
+}
+
+check() {
+  cd "monitor-v$pkgver"
+  cargo test --release --locked
+}
+
+package() {
+  cd "monitor-v$pkgver"
+  install -Dm755 target/release/kernox-monitor "$pkgdir/usr/bin/kernox-monitor"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm644 packaging/man/kernox-monitor.1 "$pkgdir/usr/share/man/man1/kernox-monitor.1"
+}

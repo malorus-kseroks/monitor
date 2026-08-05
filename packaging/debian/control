@@ -1,0 +1,15 @@
+Source: kernox-monitor
+Section: utils
+Priority: optional
+Maintainer: KernOX Project <security@kernox.example>
+Build-Depends: debhelper-compat (= 13), cargo (>= 1.95), rustc (>= 1.95)
+Standards-Version: 4.7.2
+Homepage: https://gitlab.com/malorus-kseroks/monitor
+Rules-Requires-Root: no
+
+Package: kernox-monitor
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: terminal system monitor for KernOX
+ A safe, asynchronous system monitor for Linux and Windows with process,
+ storage, network and local container inspection.

@@ -1,0 +1,10 @@
+/target/
+/.tools/
+.env
+.monitor_sudo
+.aether_sudo
+*.log
+*.profraw
+/coverage/
+/dist/
+/.cargo-audit/

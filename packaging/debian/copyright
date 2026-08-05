@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: kernox-monitor
+Source: https://gitlab.com/malorus-kseroks/monitor
+
+Files: *
+Copyright: 2026 KernOX contributors
+License: GPL-3+
+ See /usr/share/common-licenses/GPL-3 on Debian systems.

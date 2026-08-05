@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	cargo build --release --locked
+
+override_dh_auto_test:
+	cargo test --release --locked
+
+override_dh_auto_install:
+	install -Dm755 target/release/kernox-monitor debian/kernox-monitor/usr/bin/kernox-monitor
+	install -Dm644 packaging/man/kernox-monitor.1 debian/kernox-monitor/usr/share/man/man1/kernox-monitor.1

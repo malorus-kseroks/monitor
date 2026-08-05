@@ -1,0 +1,55 @@
+.TH KERNOX-MONITOR 1 "July 2026" "kernox-monitor 0.2.0" "User Commands"
+.SH NAME
+kernox-monitor \- safe terminal system monitor
+.SH SYNOPSIS
+.B kernox-monitor
+.RI [ options ]
+.br
+.B kernox-monitor doctor
+.RI [ --json ]
+.br
+.B kernox-monitor completions
+.I shell
+.SH DESCRIPTION
+Displays system, process, storage, container, network and supported platform
+information. Rendering performs no external I/O; providers update the UI
+through bounded asynchronous channels.
+.SH OPTIONS
+.TP
+.BI --interval " duration"
+Refresh interval from 250ms through 60s.
+.TP
+.BI --lang " language"
+Language: auto, en, uk, de, fr, es or ru.
+.TP
+.BI --page " page"
+Initial page.
+.TP
+.BI --color " auto|always|never"
+Color policy. NO_COLOR is also honored.
+.TP
+.B --ascii
+Use ASCII-only decorations.
+.TP
+.B --no-config
+Do not read the platform configuration file.
+.TP
+.BI --engine " endpoint"
+Add a local Docker-compatible endpoint. Plain TCP endpoints are rejected.
+.TP
+.B --show-unsupported
+Show unavailable platform modules with an explanation.
+.SH KEYS
+Tab and Shift-Tab change page; 1 through 7 select a page; slash searches;
+F5 refreshes; question mark opens help; q quits. Disruptive actions require
+a separate y confirmation.
+.SH FILES
+.TP
+.I $XDG_CONFIG_HOME/kernox-monitor/config.toml
+Linux configuration.
+.TP
+.I %APPDATA%\\kernox-monitor\\config.toml
+Windows configuration.
+.SH SEE ALSO
+.BR docker (1),
+.BR smartctl (8)

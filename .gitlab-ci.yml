@@ -1,0 +1,80 @@
+stages: [quality, test, security, build]
+
+variables:
+  CARGO_TERM_COLOR: always
+  CARGO_HOME: "$CI_PROJECT_DIR/.cargo-cache"
+
+.rust:
+  image: rust:1.95-bookworm
+  cache:
+    key: cargo-$CI_COMMIT_REF_SLUG
+    paths: [.cargo-cache, target]
+
+fmt:
+  extends: .rust
+  stage: quality
+  script: ["rustup component add rustfmt", "cargo fmt --all --check"]
+
+clippy:
+  extends: .rust
+  stage: quality
+  script: ["rustup component add clippy", "cargo clippy --all-targets --all-features --locked -- -D warnings"]
+
+test:
+  extends: .rust
+  stage: test
+  script: ["cargo test --all-targets --all-features --locked"]
+
+coverage:
+  extends: .rust
+  stage: test
+  script:
+    - cargo install cargo-llvm-cov --locked
+    - cargo llvm-cov --all-targets --all-features --locked --fail-under-lines 80
+
+shellcheck:
+  stage: quality
+  image: koalaman/shellcheck-alpine:stable
+  script: ["shellcheck install.sh uninstall.sh run.sh scripts/prepare-release.sh"]
+
+audit:
+  extends: .rust
+  stage: security
+  script: ["cargo install cargo-audit --locked", "cargo audit"]
+
+deny:
+  extends: .rust
+  stage: security
+  script: ["cargo install cargo-deny --locked", "cargo deny check"]
+
+sbom:
+  extends: .rust
+  stage: security
+  script:
+    - cargo install cargo-cyclonedx --locked
+    - cargo cyclonedx --format json --output-cdx
+  artifacts:
+    paths: [kernox-monitor.cdx.json]
+
+linux-gnu:
+  extends: .rust
+  stage: build
+  script: ["cargo build --release --all-features --locked"]
+  artifacts:
+    paths: [target/release/kernox-monitor]
+
+windows-msvc:
+  stage: build
+  tags: [windows]
+  script: ["cargo build --release --all-features --locked"]
+  artifacts:
+    paths: [target/release/kernox-monitor.exe]
+
+# Intentionally blocks publication until the leaked historical credential has
+# been rotated and all Git refs have been rewritten.
+full-history-secret-scan:
+  stage: security
+  image: zricethezav/gitleaks:latest
+  script: ["gitleaks git --redact --verbose ."]
+  rules:
+    - if: '$CI_COMMIT_TAG'
