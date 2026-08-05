@@ -107,8 +107,19 @@ fn unsupported_snapshot() -> HardwareSnapshot {
 
 #[cfg(target_os = "linux")]
 async fn linux_snapshot(service_override: &str) -> HardwareSnapshot {
-    let mut result = HardwareSnapshot::default();
-    result.gpus = scan_gpus();
+    let gpus = scan_gpus();
+    let sensors = scan_sensors();
+    let batteries = scan_batteries();
+    let displays = scan_backlights();
+    let (manager, services) = scan_services(service_override).await;
+    let mut result = HardwareSnapshot {
+        gpus,
+        sensors,
+        batteries,
+        displays,
+        services,
+        ..HardwareSnapshot::default()
+    };
     #[cfg(feature = "gpu-nvidia")]
     {
         let nvml = scan_nvidia_nvml();
@@ -120,11 +131,6 @@ async fn linux_snapshot(service_override: &str) -> HardwareSnapshot {
         ));
         result.gpus.extend(nvml);
     }
-    result.sensors = scan_sensors();
-    result.batteries = scan_batteries();
-    result.displays = scan_backlights();
-    let (manager, services) = scan_services(service_override).await;
-    result.services = services;
     result.provider_reports.push(report(
         "gpu-sysfs",
         state(!result.gpus.is_empty()),
