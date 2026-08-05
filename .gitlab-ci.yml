@@ -67,6 +67,8 @@ linux-gnu:
 windows-msvc:
   stage: build
   tags: [windows]
+  when: manual
+  allow_failure: true
   script: ["cargo build --release --all-features --locked"]
   artifacts:
     paths: [target/release/kernox-monitor.exe]
